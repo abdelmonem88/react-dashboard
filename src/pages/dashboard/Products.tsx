@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { Space } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { toast } from "react-toastify";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
 import { Product, UpdatedProduct, CreatedProduct } from "../../types";
 import {
@@ -125,43 +127,74 @@ const Products = () => {
     },
   });
 
-  const fetchProducts = async (search: string, page: number) => {
-    try {
-      setLoading(true);
-      const res = await getProducts(search, page);
-      setProducts(res.products);
-      setTableParams({
-        pagination: {
-          ...tableParams.pagination,
-          total: res.total,
-        },
-      });
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
-  };
-
   const debouncedSearchTerm = useDebounce(search, 500);
 
-  useEffect(() => {
-    if (debouncedSearchTerm) {
-      fetchProducts(
-        debouncedSearchTerm,
-        tableParams.pagination.current as number
-      );
-    } else {
-      fetchProducts("", tableParams.pagination.current as number);
+  const queryClient = useQueryClient();
+  const { isLoading, isSuccess, isError, data, error, refetch } = useQuery<
+    {
+      products: Product[];
+      total: number;
+      skip: number;
+      limit: number;
+    },
+    Error
+  >(
+    "query-products",
+    () => {
+      if (debouncedSearchTerm) {
+        return getProducts(
+          debouncedSearchTerm,
+          tableParams.pagination.current as number
+        );
+      }
+      return getProducts("", tableParams.pagination.current as number);
+    },
+    {
+      onSuccess: (data) => {
+        setProducts(data.products);
+        setTableParams({
+          pagination: {
+            ...tableParams.pagination,
+            total: data.total,
+          },
+        });
+      },
     }
-  }, [debouncedSearchTerm, tableParams.pagination.current]);
+  );
+
+  const { isLoading: isCreating, mutate: createMutate } = useMutation(
+    (product: CreatedProduct) => createProduct(product),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("query-products");
+      },
+    }
+  );
+
+  const { isLoading: isDeleting, mutate: deleteMutate } = useMutation(
+    (id: number) => deleteProduct(id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("query-products");
+      },
+    }
+  );
+
+  const { isLoading: isUpdating, mutate: updateMutate } = useMutation(
+    (product: UpdatedProduct) =>
+      updateProduct(selectedProduct?.id as number, product),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("query-products");
+      },
+    }
+  );
 
   const handleDeleteProduct = async (id: number) => {
     try {
-      await deleteProduct(id);
+      await deleteMutate(id);
       toast.success("Product deleted successfully");
       setShowDeleteModal(false);
-      fetchProducts("", tableParams.pagination.current as number);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
@@ -170,10 +203,9 @@ const Products = () => {
 
   const handleUpdateProduct = async (id: number, product: UpdatedProduct) => {
     try {
-      await updateProduct(id, product);
+      await updateMutate(product);
       setShowEditModal(false);
       toast.success("Product updated successfully");
-      fetchProducts("", tableParams.pagination.current as number);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
@@ -182,15 +214,35 @@ const Products = () => {
 
   const handleCreateProduct = async (product: CreatedProduct) => {
     try {
-      await createProduct(product);
+      await createMutate(product);
       setShowCreateModal(false);
       toast.success("Product created successfully");
-      fetchProducts("", tableParams.pagination.current as number);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
     }
   };
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      refetch();
+    } else {
+      refetch();
+    }
+  }, [debouncedSearchTerm, refetch]);
+
+  useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tableParams.pagination.current]);
+
+  useEffect(() => {
+    if (isLoading || isCreating || isDeleting || isUpdating) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [isLoading, isCreating, isDeleting, isUpdating]);
 
   return (
     <>

@@ -2,7 +2,7 @@ import axiosInstance from "../utility/axios";
 
 import { UpdatedProduct, CreatedProduct } from "../types";
 
-const getProducts = async (search: string, page: number = 1) => {
+const getProducts = async (search: string, page: number) => {
   let skip = (page - 1) * 10;
   try {
     const response = await axiosInstance.get(
