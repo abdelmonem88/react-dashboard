@@ -3,9 +3,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Login from "./pages/Login";
-import SharedLayout from "./components/SharedLayout";
+import SharedLayout from "./components/global/SharedLayout";
 import Products from "./pages/dashboard/Products";
-import Stores from "./pages/dashboard/Stores";
+import Users from "./pages/dashboard/Users";
 import PageNotFound from "./pages/PageNotFound";
 import AuthGuard from "./utility/AuthGuard";
 import { AuthProvider } from "./context/authContext";
@@ -24,7 +24,7 @@ function App() {
             }
           >
             <Route index element={<Products />} />
-            <Route path="/stores" element={<Stores />} />
+            <Route path="/users" element={<Users />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<PageNotFound />} />

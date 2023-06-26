@@ -1,16 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useContext } from "react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
 import { AiFillAppstore } from "react-icons/ai";
-import { IoStorefrontSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { FaUsers } from "react-icons/fa";
 
-import { AuthContext } from "../context/authContext";
+import { AuthContext } from "../../context/authContext";
 
-type Props = {};
-
-const SharedLayout = (props: Props) => {
+const SharedLayout = () => {
   const { logout } = useContext(AuthContext);
 
   return (
@@ -36,12 +33,12 @@ const SharedLayout = (props: Props) => {
             <li className="mb-4 text-xl font-bold text-[#111827]">
               <Link
                 to="/"
-                className="flex items-center space-x-2 rounded-lg px-4 py-2 text-2xl hover:bg-[rgba(17,24,39,.25)]"
+                className="flex items-center space-x-2 rounded-lg px-4 py-2 text-2xl hover:bg-[#F6F6F7]"
                 style={
                   window.location.pathname === "/"
                     ? {
                         color: "#111827",
-                        backgroundColor: "rgba(17,24,39,0.25)",
+                        backgroundColor: " rgba(17,24,39,0.25)",
                       }
                     : {}
                 }
@@ -54,18 +51,21 @@ const SharedLayout = (props: Props) => {
             </li>
             <li className="mb-4 text-xl font-bold text-[#111827]">
               <Link
-                to="/stores"
-                className="flex items-center space-x-2 rounded-lg px-4 py-2 text-2xl hover:bg-[rgba(17,24,39,0.25)]"
+                to="/users"
+                className="flex items-center space-x-2 rounded-lg px-4 py-2 text-2xl hover:bg-[#F6F6F7]"
                 style={
-                  window.location.pathname === "/stores"
-                    ? { color: "#111827", backgroundColor: "#F6F6F7" }
+                  window.location.pathname === "/users"
+                    ? {
+                        color: "#111827",
+                        backgroundColor: " rgba(17,24,39,0.25)",
+                      }
                     : {}
                 }
               >
                 <span>
-                  <IoStorefrontSharp />
+                  <FaUsers />
                 </span>
-                <span>Stores</span>
+                <span>Users</span>
               </Link>
             </li>
           </ul>
