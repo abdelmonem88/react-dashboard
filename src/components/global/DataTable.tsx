@@ -14,6 +14,7 @@ type Props = {
     SetStateAction<{ pagination: TablePaginationConfig }>
   >;
   loading: boolean;
+  handleRowClick: (id: number) => void;
 };
 
 const DataTable = ({
@@ -22,6 +23,7 @@ const DataTable = ({
   tableParams,
   setTableParams,
   loading,
+  handleRowClick,
 }: Props) => {
   return (
     <div id="items_table" className="rounded-lg bg-white shadow">
@@ -45,6 +47,13 @@ const DataTable = ({
         loading={loading}
         scroll={{
           y: 500,
+        }}
+        onRow={({ id }: { id: number }) => {
+          return {
+            onClick: () => {
+              handleRowClick(id);
+            },
+          };
         }}
       />
     </div>

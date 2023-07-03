@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useContext } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
 import { AiFillAppstore } from "react-icons/ai";
 import { FaUsers } from "react-icons/fa";
@@ -9,6 +9,10 @@ import { AuthContext } from "../../context/authContext";
 
 const SharedLayout = () => {
   const { logout } = useContext(AuthContext);
+  const location = useLocation();
+  const { pathname } = location;
+  const splitLocation = pathname.split("/");
+  const path = splitLocation[1];
 
   return (
     <div id="layout" className="h-screen">
@@ -35,7 +39,7 @@ const SharedLayout = () => {
                 to="/"
                 className="flex items-center space-x-2 rounded-lg px-4 py-2 text-2xl hover:bg-[#F6F6F7]"
                 style={
-                  window.location.pathname === "/"
+                  window.location.pathname === "/" || path === "products"
                     ? {
                         color: "#111827",
                         backgroundColor: " rgba(17,24,39,0.25)",
@@ -54,7 +58,7 @@ const SharedLayout = () => {
                 to="/users"
                 className="flex items-center space-x-2 rounded-lg px-4 py-2 text-2xl hover:bg-[#F6F6F7]"
                 style={
-                  window.location.pathname === "/users"
+                  path === "users"
                     ? {
                         color: "#111827",
                         backgroundColor: " rgba(17,24,39,0.25)",

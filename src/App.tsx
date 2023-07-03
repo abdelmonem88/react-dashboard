@@ -9,6 +9,7 @@ import Users from "./pages/dashboard/Users";
 import PageNotFound from "./pages/PageNotFound";
 import AuthGuard from "./utility/AuthGuard";
 import { AuthProvider } from "./context/authContext";
+import SingleProduct from "./pages/dashboard/SingleProduct";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             }
           >
             <Route index element={<Products />} />
+            <Route path="products/:id" element={<SingleProduct />} />
             <Route path="/users" element={<Users />} />
           </Route>
           <Route path="/login" element={<Login />} />

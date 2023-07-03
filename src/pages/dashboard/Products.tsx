@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Space } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Product, UpdatedProduct, CreatedProduct } from "../../types";
 import {
@@ -28,6 +30,7 @@ const Products = () => {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const columns: ColumnsType<Product> = [
     {
@@ -81,7 +84,8 @@ const Products = () => {
             focus:ring-[#047857]
             focus:ring-opacity-50
             "
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setSelectedProduct(record);
               setShowEditModal(true);
             }}
@@ -104,7 +108,8 @@ const Products = () => {
             focus:ring-[#B91C1C]
             focus:ring-opacity-50
             "
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setSelectedProduct(record);
               setShowDeleteModal(true);
             }}
@@ -192,6 +197,11 @@ const Products = () => {
     }
   };
 
+  // navigate to single product page
+  const handleRowClick = (id: number) => {
+    navigate(`/products/${id}`);
+  };
+
   return (
     <>
       <PageTitle title="Products" />
@@ -210,6 +220,7 @@ const Products = () => {
         tableParams={tableParams}
         setTableParams={setTableParams}
         loading={loading}
+        handleRowClick={handleRowClick}
       />
 
       <DeleteProductModal
